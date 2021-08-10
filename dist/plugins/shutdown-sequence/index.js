@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShutdownSequence = {
+    name: 'App-Shutdown-Sequence',
+    version: '0.1.0',
+    register: function (server) {
+        process.on('uncaughtException', gracefulShutdown);
+        process.on('unhandledRejection', gracefulShutdown);
+        process.on('SIGUSR2', gracefulShutdown);
+        process.on('SIGINT', gracefulShutdown);
+        async function gracefulShutdown(err) {
+            await server.stop();
+            console.error('An unexpected error occurred');
+            server.log('error', 'An unexpected error occurred');
+            process.exit(err ? 1 : 0);
+        }
+    }
+};
+exports.default = ShutdownSequence;
+//# sourceMappingURL=index.js.map
